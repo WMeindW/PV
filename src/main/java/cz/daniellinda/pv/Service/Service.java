@@ -1,17 +1,18 @@
 package cz.daniellinda.pv.Service;
 
 import cz.daniellinda.pv.Log.Logger;
-import org.springframework.boot.CommandLineRunner;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 
-
-public class Service implements CommandLineRunner {
+@Component
+public class Service {
     public static String state = "Starting";
 
+    @PostConstruct
     public static boolean start() {
-        Thread shutdown = new Thread(Service::stop);
-        Runtime.getRuntime().addShutdownHook(shutdown);
         File dir = new File("/etc/pv/");
         dir.mkdirs();
         Logger.writeLog("Initiated start");
@@ -20,16 +21,11 @@ public class Service implements CommandLineRunner {
         return true;
     }
 
+    @PreDestroy
     public static void stop() {
         state = "Stopping";
         Logger.writeLog("Initiated shutdown");
         state = "Stopped";
         Logger.writeLog("Stopped");
-        Runtime.getRuntime().halt(0);
-    }
-
-    @Override
-    public void run(String... args) {
-        System.out.println(start());
     }
 }

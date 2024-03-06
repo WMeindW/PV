@@ -1,5 +1,7 @@
 package cz.daniellinda.pv.Controller;
 
+import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypes;
+import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypesRepo;
 import cz.daniellinda.pv.Database.Customers.Customers;
 import cz.daniellinda.pv.Database.Customers.CustomersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import java.util.List;
 public class Controller {
     @Autowired
     private CustomersRepo customersRepo;
+    @Autowired
+    private CustomerTypesRepo customersTypesRepo;
 
     @GetMapping("/")
     public ResponseEntity<String> index() throws IOException {
@@ -32,7 +36,21 @@ public class Controller {
         } else {
             return new ResponseEntity<>("Bad login", HttpStatus.OK);
         }
+    }
 
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestParam String name, @RequestParam String surname, @RequestParam String email, @RequestParam String phone, @RequestParam String type) throws IOException {
+        if (!checkLogin(name, surname)) {
+            Customers customer = new Customers();
+            customer.setName(name + " " + surname);
+            customer.setPhone(phone);
+            customer.setEmail(email);
+            customer.setCustomerTypes(checkCustomerTypes(type));
+            customersRepo.save(customer);
+            return new ResponseEntity<>(Files.readString(Path.of("src/main/resources/static/index.html"), StandardCharsets.UTF_8) + "<script>localStorage.clear();\n" + "localStorage.setItem(\"name\", \"" + name + "\");\n" + "localStorage.setItem(\"surname\",\"" + surname + "\");\n" + "</script>", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Bad register", HttpStatus.OK);
+        }
     }
 
     private boolean checkLogin(String name, String surname) {
@@ -41,5 +59,17 @@ public class Controller {
             if (customer.getName().equals(name + " " + surname)) return true;
         }
         return false;
+    }
+
+    private CustomerTypes checkCustomerTypes(String type) {
+        for (CustomerTypes customerType : customersTypesRepo.findAll()) {
+            if (customerType.getName().equals(type)) return customerType;
+        }
+        CustomerTypes types = new CustomerTypes();
+        types.setName(type);
+        if (type.equals("Firm"))
+            types.setTaxFree(true);
+        customersTypesRepo.save(types);
+        return types;
     }
 }

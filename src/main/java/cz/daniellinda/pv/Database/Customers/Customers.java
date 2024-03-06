@@ -14,7 +14,7 @@ public class Customers {
     @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 40, nullable = false)
     private String email;
 
     @Column(length = 20, nullable = false)

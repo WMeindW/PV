@@ -16,7 +16,8 @@ public class Items {
     @ManyToOne
     @JoinColumn(name = "orders_id")
     private Orders orders;
-    @ManyToMany(mappedBy = "itemss")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "items_products", joinColumns = @JoinColumn(name = "products_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "items_id", referencedColumnName = "id"))
     private List<Products> products;
     public void setId(Long id) {
         this.id = id;

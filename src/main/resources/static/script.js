@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     add.addEventListener("click", function (event) {
         event.preventDefault();
         form.innerHTML += "<label>\n" +
-            "                <select name=\"select\">\n" +
+            "                <select name=\"products\">\n" +
             "                </select>\n" +
             "            </label>\n" +
             "            <label>\n" +
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 });
 
 function parseProducts(value) {
-    let products = document.getElementsByName("select");
+    let products = document.getElementsByName("products");
     let values = value.split(",");
     for (let i = 0; i < values.length - 1; i++) {
         products[productNumber].innerHTML += '<option value="' + values[i] + '">' + values[i] + '</option>';

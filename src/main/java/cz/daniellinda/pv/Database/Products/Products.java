@@ -16,16 +16,15 @@ public class Products {
     private String text;
     @Column(nullable = false)
     private Long price;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "items_products", joinColumns = @JoinColumn(name = "items_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "products_id", referencedColumnName = "id"))
-    private List<Items> itemss;
+    @ManyToMany(mappedBy = "products")
+    private List<Items> items;
 
-    public List<Items> getItemss() {
-        return itemss;
+    public List<Items> getItems() {
+        return items;
     }
 
-    public void setItemss(List<Items> itemss) {
-        this.itemss = itemss;
+    public void setItems(List<Items> items) {
+        this.items = items;
     }
 
     public String getName() {
@@ -50,14 +49,6 @@ public class Products {
 
     public void setPrice(Long price) {
         this.price = price;
-    }
-
-    public List<Items> getItems() {
-        return itemss;
-    }
-
-    public void setItems(List<Items> items) {
-        this.itemss = items;
     }
 
     public void setId(Long id) {

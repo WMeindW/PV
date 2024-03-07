@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.List;
 
 @org.springframework.stereotype.Controller
@@ -68,7 +69,7 @@ public class Controller {
     }
 
     @PostMapping("/order")
-    public ResponseEntity<Orders> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] itemName, @RequestParam Integer[] productNumber) {
+    public ResponseEntity<List<Items>> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] products, @RequestParam Integer[] productNumber) {
         Orders order = new Orders();
         if (checkLogin(name, surname)) {
             List<Customers> list = customersRepo.findAll();
@@ -76,9 +77,9 @@ public class Controller {
                 if (customer.getName().equals(name + " " + surname)) order.setCustomers(customer);
             }
             order.setDate(Date.valueOf(LocalDate.now()));
-            return new ResponseEntity<>(order, HttpStatus.OK);
+            return new ResponseEntity<>(checkItems(products, productNumber, order), HttpStatus.OK);
         }
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @GetMapping("/products")
@@ -108,5 +109,30 @@ public class Controller {
         if (type.equals("Firm")) types.setTaxFree(true);
         customersTypesRepo.save(types);
         return types;
+    }
+
+    private List<Items> checkItems(String[] products, Integer[] productNumber, Orders order) {
+        List<Products> productsData = productsRepo.findAll();
+        List<Items> items = new LinkedList<>();
+        for (int i = 0; i < products.length; i++) {
+            Items item = new Items();
+            item.setOrders(order);
+            item.setNumberOf(Integer.toUnsignedLong(productNumber[i]));
+            List<Products> itemProducts = new LinkedList<>();
+            for (int j = 0; j < productNumber[i]; j++) {
+                for (Products product : productsData) {
+                    for (String s : products) {
+                        if (product.getName().equals(s)) {
+                            itemProducts.add(product);
+                        }
+                    }
+                }
+            }
+            item.setProducts(itemProducts);
+            items.add(item);
+        }
+        ordersRepo.save(order);
+        itemsRepo.saveAll(items);
+        return items;
     }
 }

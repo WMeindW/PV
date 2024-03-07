@@ -20,6 +20,14 @@ public class Products {
     @JoinTable(name = "items_products", joinColumns = @JoinColumn(name = "items_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "products_id", referencedColumnName = "id"))
     private List<Items> itemss;
 
+    public List<Items> getItemss() {
+        return itemss;
+    }
+
+    public void setItemss(List<Items> itemss) {
+        this.itemss = itemss;
+    }
+
     public String getName() {
         return name;
     }

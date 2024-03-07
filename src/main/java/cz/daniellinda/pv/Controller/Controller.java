@@ -4,8 +4,11 @@ import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypes;
 import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypesRepo;
 import cz.daniellinda.pv.Database.Customers.Customers;
 import cz.daniellinda.pv.Database.Customers.CustomersRepo;
+import cz.daniellinda.pv.Database.Items.Items;
 import cz.daniellinda.pv.Database.Items.ItemsRepo;
+import cz.daniellinda.pv.Database.Orders.Orders;
 import cz.daniellinda.pv.Database.Orders.OrdersRepo;
+import cz.daniellinda.pv.Database.Products.Products;
 import cz.daniellinda.pv.Database.Products.ProductsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @org.springframework.stereotype.Controller
@@ -63,8 +68,27 @@ public class Controller {
     }
 
     @PostMapping("/order")
-    public ResponseEntity<String> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] itemName, @RequestParam String[] itemPrice) {
+    public ResponseEntity<Orders> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] itemName, @RequestParam Integer[] productNumber) {
+        Orders order = new Orders();
+        if (checkLogin(name, surname)) {
+            List<Customers> list = customersRepo.findAll();
+            for (Customers customer : list) {
+                if (customer.getName().equals(name + " " + surname)) order.setCustomers(customer);
+            }
+            order.setDate(Date.valueOf(LocalDate.now()));
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(order, HttpStatus.OK);
+    }
 
+    @GetMapping("/products")
+    public ResponseEntity<String> products() {
+        List<Products> products = productsRepo.findAll();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Products product : products) {
+            stringBuilder.append(product.getName()).append(",");
+        }
+        return new ResponseEntity<>(stringBuilder.toString(), HttpStatus.OK);
     }
 
     private boolean checkLogin(String name, String surname) {
@@ -81,8 +105,7 @@ public class Controller {
         }
         CustomerTypes types = new CustomerTypes();
         types.setName(type);
-        if (type.equals("Firm"))
-            types.setTaxFree(true);
+        if (type.equals("Firm")) types.setTaxFree(true);
         customersTypesRepo.save(types);
         return types;
     }

@@ -22,6 +22,30 @@ public class Items {
         this.id = id;
     }
 
+    public Long getNumberOf() {
+        return numberOf;
+    }
+
+    public void setNumberOf(Long numberOf) {
+        this.numberOf = numberOf;
+    }
+
+    public Orders getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Orders orders) {
+        this.orders = orders;
+    }
+
+    public List<Products> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Products> products) {
+        this.products = products;
+    }
+
     public Long getId() {
         return id;
     }

@@ -2,9 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
 <body>
-
+<div>
+    <form action="/order" method="post">
+        <div id="form">
+            <h2>Order</h2>
+            <label>
+                <input id="name" type="text" name="name" placeholder="Name" required>
+            </label>
+            <label>
+                <input id="surname" type="text" name="surname" placeholder="Surname" required>
+            </label>
+            <h2>Items</h2>
+            <label>
+                <input type="text" name="itemName" placeholder="Item name" required>
+            </label>
+            <label>
+                <input type="text" contenteditable="false" value="1000Kč" name="itemPrice" placeholder="Item price"
+                       required>
+            </label>
+        </div>
+        <button id="add">Add more</button>
+        <input type="submit" value="Order">
+    </form>
+</div>
 </body>
 </html>

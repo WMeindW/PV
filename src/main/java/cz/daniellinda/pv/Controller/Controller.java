@@ -4,6 +4,9 @@ import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypes;
 import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypesRepo;
 import cz.daniellinda.pv.Database.Customers.Customers;
 import cz.daniellinda.pv.Database.Customers.CustomersRepo;
+import cz.daniellinda.pv.Database.Items.ItemsRepo;
+import cz.daniellinda.pv.Database.Orders.OrdersRepo;
+import cz.daniellinda.pv.Database.Products.ProductsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,12 @@ public class Controller {
     private CustomersRepo customersRepo;
     @Autowired
     private CustomerTypesRepo customersTypesRepo;
+    @Autowired
+    private ItemsRepo itemsRepo;
+    @Autowired
+    private OrdersRepo ordersRepo;
+    @Autowired
+    private ProductsRepo productsRepo;
 
     @GetMapping("/")
     public ResponseEntity<String> index() throws IOException {
@@ -51,6 +60,11 @@ public class Controller {
         } else {
             return new ResponseEntity<>("Bad register", HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/order")
+    public ResponseEntity<String> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] itemName, @RequestParam String[] itemPrice) {
+
     }
 
     private boolean checkLogin(String name, String surname) {

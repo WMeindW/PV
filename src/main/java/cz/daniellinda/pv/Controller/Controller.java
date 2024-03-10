@@ -69,7 +69,7 @@ public class Controller {
     }
 
     @PostMapping("/order")
-    public ResponseEntity<List<Items>> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] products, @RequestParam Integer[] productNumber) {
+    public ResponseEntity<String> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] products, @RequestParam Integer[] productNumber) {
         Orders order = new Orders();
         if (checkLogin(name, surname)) {
             List<Customers> list = customersRepo.findAll();
@@ -77,9 +77,10 @@ public class Controller {
                 if (customer.getName().equals(name + " " + surname)) order.setCustomers(customer);
             }
             order.setDate(Date.valueOf(LocalDate.now()));
-            return new ResponseEntity<>(checkItems(products, productNumber, order), HttpStatus.OK);
+            checkItems(products, productNumber, order);
+            return new ResponseEntity<>("Ordered", HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/products")
@@ -90,6 +91,18 @@ public class Controller {
             stringBuilder.append(product.getName()).append(",");
         }
         return new ResponseEntity<>(stringBuilder.toString(), HttpStatus.OK);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<String> orders(@RequestParam String name, @RequestParam String surname) {
+        StringBuilder builder = new StringBuilder();
+        System.out.println(name);
+        System.out.println(surname);
+        List<Orders> list = ordersRepo.findAll();
+        for (Orders order : list) {
+            if (order.getCustomers().getName().equals(name + " " + surname)) builder.append(order.getDate().toString()).append(",");
+        }
+        return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
     }
 
     private boolean checkLogin(String name, String surname) {
@@ -111,7 +124,7 @@ public class Controller {
         return types;
     }
 
-    private List<Items> checkItems(String[] products, Integer[] productNumber, Orders order) {
+    private void checkItems(String[] products, Integer[] productNumber, Orders order) {
         List<Products> productsData = productsRepo.findAll();
         List<Items> items = new LinkedList<>();
         for (int i = 0; i < products.length; i++) {
@@ -133,6 +146,5 @@ public class Controller {
         }
         ordersRepo.save(order);
         itemsRepo.saveAll(items);
-        return items;
     }
 }

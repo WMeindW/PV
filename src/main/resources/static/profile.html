@@ -3,8 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js"></script>
 </head>
 <body>
-
+<div>
+    <form action="/edit" method="post">
+        <div id="form">
+            <h2>Order</h2>
+            <label>
+                <input id="name" type="hidden" name="name" placeholder="Name" required>
+            </label>
+            <label>
+                <input id="surname" type="hidden" name="surname" placeholder="Surname" required>
+            </label>
+            <label>
+                <select id="order">
+                </select>
+            </label>
+        </div>
+        <input type="submit" value="Edit">
+    </form>
+    <a href="/index.html">Order</a>
+</div>
 </body>
 </html>

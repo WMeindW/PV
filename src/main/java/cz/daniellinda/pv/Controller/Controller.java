@@ -1,5 +1,8 @@
 package cz.daniellinda.pv.Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypes;
 import cz.daniellinda.pv.Database.CustomerTypes.CustomerTypesRepo;
 import cz.daniellinda.pv.Database.Customers.Customers;
@@ -10,6 +13,9 @@ import cz.daniellinda.pv.Database.Orders.Orders;
 import cz.daniellinda.pv.Database.Orders.OrdersRepo;
 import cz.daniellinda.pv.Database.Products.Products;
 import cz.daniellinda.pv.Database.Products.ProductsRepo;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,13 +102,47 @@ public class Controller {
     @GetMapping("/orders")
     public ResponseEntity<String> orders(@RequestParam String name, @RequestParam String surname) {
         StringBuilder builder = new StringBuilder();
-        System.out.println(name);
-        System.out.println(surname);
         List<Orders> list = ordersRepo.findAll();
         for (Orders order : list) {
-            if (order.getCustomers().getName().equals(name + " " + surname)) builder.append(order.getDate().toString()).append(",");
+            if (order.getCustomers().getName().equals(name + " " + surname))
+                builder.append(order.getDate().toString()).append(",");
         }
         return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
+    }
+
+    @GetMapping("/order")
+    public ResponseEntity<String> order(@RequestParam String name, @RequestParam String surname, @RequestParam String date) throws JsonProcessingException {
+        StringBuilder builder = new StringBuilder();
+        ObjectMapper mapper = new ObjectMapper();
+        List<Orders> list = ordersRepo.findAll();
+        for (Orders order : list) {
+            if (order.getCustomers().getName().equals(name + " " + surname) && order.getDate().toString().equals(date))
+                builder.append(mapper.writeValueAsString(order.getItems()));
+        }
+
+
+        return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> delete(@RequestParam String name, @RequestParam String surname, @RequestParam String order) {
+        if (checkLogin(name, surname)) {
+            List<Orders> list = ordersRepo.findAll();
+            List<Items> list1 = itemsRepo.findAll();
+            for (Orders item : list) {
+                if (item.getCustomers().getName().equals(name + " " + surname) && item.getDate().toString().equals(order)) {
+                    for (Items item1 : list1) {
+                        if (item1.getOrders().equals(item))
+                            itemsRepo.delete(item1);
+                    }
+                    ordersRepo.delete(item);
+                }
+
+
+            }
+            return new ResponseEntity<>("Deleted", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
     }
 
     private boolean checkLogin(String name, String surname) {
@@ -130,18 +170,12 @@ public class Controller {
         for (int i = 0; i < products.length; i++) {
             Items item = new Items();
             item.setOrders(order);
-            item.setNumberOf(Integer.toUnsignedLong(productNumber[i]));
-            List<Products> itemProducts = new LinkedList<>();
-            for (int j = 0; j < productNumber[i]; j++) {
-                for (Products product : productsData) {
-                    for (String s : products) {
-                        if (product.getName().equals(s)) {
-                            itemProducts.add(product);
-                        }
-                    }
+            item.setNumberOf(Long.valueOf(productNumber[i]));
+            for (Products p : productsData) {
+                if (p.getName().equals(products[i])) {
+                    item.setProducts(p);
                 }
             }
-            item.setProducts(itemProducts);
             items.add(item);
         }
         ordersRepo.save(order);

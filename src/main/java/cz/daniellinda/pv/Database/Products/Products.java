@@ -1,5 +1,6 @@
 package cz.daniellinda.pv.Database.Products;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import cz.daniellinda.pv.Database.Items.Items;
 import jakarta.persistence.*;
 
@@ -16,9 +17,10 @@ public class Products {
     private String text;
     @Column(nullable = false)
     private Long price;
-    @ManyToMany(mappedBy = "products")
+    @OneToMany(mappedBy = "products")
     private List<Items> items;
 
+    @JsonIgnore
     public List<Items> getItems() {
         return items;
     }
@@ -54,8 +56,17 @@ public class Products {
     public void setId(Long id) {
         this.id = id;
     }
-
+    @JsonIgnore
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                ", name='" + name + '\'' +
+                ", text='" + text + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

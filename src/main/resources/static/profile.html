@@ -9,7 +9,7 @@
 </head>
 <body>
 <div>
-    <form action="/edit" method="post">
+    <form action="/delete" method="post">
         <div id="form">
             <h2>Order</h2>
             <label>
@@ -19,11 +19,11 @@
                 <input id="surname" type="hidden" name="surname" placeholder="Surname" required>
             </label>
             <label>
-                <select id="order">
+                <select name="order" id="order">
                 </select>
             </label>
         </div>
-        <input type="submit" value="Edit">
+        <input type="submit" value="Delete">
     </form>
     <a href="/index.html">Order</a>
 </div>

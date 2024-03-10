@@ -59,6 +59,11 @@ function parseOrders(value) {
         order.innerHTML += '<option name="options" value="' + value.split(",")[i] + '">' + value.split(",")[i] + '</option>';
     }
     order.addEventListener("change", function (e) {
-        console.log(e.target[e.target.selectedIndex].value);
+        fetch("/order?name=" + localStorage.getItem("name") + "&surname=" + localStorage.getItem("surname") + "&date=" + e.target[e.target.selectedIndex].value.toString()).then(r => {
+            r.text().then((value) => {
+                const object = JSON.parse(value);
+                console.log(object);
+            });
+        });
     });
 }

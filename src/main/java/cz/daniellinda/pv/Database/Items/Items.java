@@ -1,5 +1,6 @@
 package cz.daniellinda.pv.Database.Items;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import cz.daniellinda.pv.Database.Orders.Orders;
 import cz.daniellinda.pv.Database.Products.Products;
 import jakarta.persistence.*;
@@ -16,9 +17,10 @@ public class Items {
     @ManyToOne
     @JoinColumn(name = "orders_id")
     private Orders orders;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "items_products", joinColumns = @JoinColumn(name = "products_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "items_id", referencedColumnName = "id"))
-    private List<Products> products;
+    @ManyToOne
+    @JoinColumn(name = "products_id")
+    private Products products;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -30,7 +32,7 @@ public class Items {
     public void setNumberOf(Long numberOf) {
         this.numberOf = numberOf;
     }
-
+    @JsonIgnore
     public Orders getOrders() {
         return orders;
     }
@@ -39,15 +41,24 @@ public class Items {
         this.orders = orders;
     }
 
-    public List<Products> getProducts() {
+    public Products getProducts() {
         return products;
     }
 
-    public void setProducts(List<Products> products) {
+    public void setProducts(Products products) {
         this.products = products;
     }
 
+    @JsonIgnore
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                ", numberOf=" + numberOf +
+                ", products=" + products +
+                '}';
     }
 }

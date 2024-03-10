@@ -32,6 +32,9 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The type Controller.
+ */
 @org.springframework.stereotype.Controller
 public class Controller {
     @Autowired
@@ -45,11 +48,25 @@ public class Controller {
     @Autowired
     private ProductsRepo productsRepo;
 
+    /**
+     * Index response entity.
+     *
+     * @return the response entity
+     * @throws IOException the io exception
+     */
     @GetMapping("/")
     public ResponseEntity<String> index() throws IOException {
         return new ResponseEntity<>(Files.readString(Path.of("src/main/resources/static/login.html"), StandardCharsets.UTF_8), HttpStatus.OK);
     }
 
+    /**
+     * Login response entity.
+     *
+     * @param name    the name
+     * @param surname the surname
+     * @return the response entity
+     * @throws IOException the io exception
+     */
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String name, @RequestParam String surname) throws IOException {
         if (checkLogin(name, surname)) {
@@ -59,6 +76,17 @@ public class Controller {
         }
     }
 
+    /**
+     * Register response entity.
+     *
+     * @param name    the name
+     * @param surname the surname
+     * @param email   the email
+     * @param phone   the phone
+     * @param type    the type
+     * @return the response entity
+     * @throws IOException the io exception
+     */
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestParam String name, @RequestParam String surname, @RequestParam String email, @RequestParam String phone, @RequestParam String type) throws IOException {
         if (!checkLogin(name, surname)) {
@@ -74,6 +102,15 @@ public class Controller {
         }
     }
 
+    /**
+     * Order response entity.
+     *
+     * @param name          the name
+     * @param surname       the surname
+     * @param products      the products
+     * @param productNumber the product number
+     * @return the response entity
+     */
     @PostMapping("/order")
     public ResponseEntity<String> order(@RequestParam String name, @RequestParam String surname, @RequestParam String[] products, @RequestParam Integer[] productNumber) {
         Orders order = new Orders();
@@ -89,6 +126,11 @@ public class Controller {
         return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Products response entity.
+     *
+     * @return the response entity
+     */
     @GetMapping("/products")
     public ResponseEntity<String> products() {
         List<Products> products = productsRepo.findAll();
@@ -99,6 +141,13 @@ public class Controller {
         return new ResponseEntity<>(stringBuilder.toString(), HttpStatus.OK);
     }
 
+    /**
+     * Orders response entity.
+     *
+     * @param name    the name
+     * @param surname the surname
+     * @return the response entity
+     */
     @GetMapping("/orders")
     public ResponseEntity<String> orders(@RequestParam String name, @RequestParam String surname) {
         StringBuilder builder = new StringBuilder();
@@ -110,6 +159,15 @@ public class Controller {
         return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
     }
 
+    /**
+     * Order response entity.
+     *
+     * @param name    the name
+     * @param surname the surname
+     * @param date    the date
+     * @return the response entity
+     * @throws JsonProcessingException the json processing exception
+     */
     @GetMapping("/order")
     public ResponseEntity<String> order(@RequestParam String name, @RequestParam String surname, @RequestParam String date) throws JsonProcessingException {
         StringBuilder builder = new StringBuilder();
@@ -124,6 +182,14 @@ public class Controller {
         return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
     }
 
+    /**
+     * Delete response entity.
+     *
+     * @param name    the name
+     * @param surname the surname
+     * @param order   the order
+     * @return the response entity
+     */
     @PostMapping("/delete")
     public ResponseEntity<String> delete(@RequestParam String name, @RequestParam String surname, @RequestParam String order) {
         if (checkLogin(name, surname)) {

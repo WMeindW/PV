@@ -7,10 +7,21 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 
+/**
+ * The type Service.
+ */
 @Component
 public class Service {
+    /**
+     * The constant state.
+     */
     public static String state = "Starting";
 
+    /**
+     * Start boolean.
+     *
+     * @return the boolean
+     */
     @PostConstruct
     public static boolean start() {
         File dir = new File("/etc/pv/");
@@ -21,6 +32,9 @@ public class Service {
         return true;
     }
 
+    /**
+     * Stop.
+     */
     @PreDestroy
     public static void stop() {
         state = "Stopping";

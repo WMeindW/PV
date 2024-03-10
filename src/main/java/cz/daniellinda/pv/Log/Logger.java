@@ -7,7 +7,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+/**
+ * The type Logger.
+ */
 public class Logger {
+    /**
+     * Write log boolean.
+     *
+     * @param literal the literal
+     * @return the boolean
+     */
     public static boolean writeLog(String literal) {
         File logFile = new File("/etc/pv/log.txt");
         if (!logFile.exists()) {
@@ -27,6 +36,11 @@ public class Logger {
         return true;
     }
 
+    /**
+     * Error log.
+     *
+     * @param literal the literal
+     */
     public static void errorLog(String literal) {
         File logFile = new File("/etc/pv/errorLog.txt");
         if (!logFile.exists()) {
